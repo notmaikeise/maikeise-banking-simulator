@@ -24,7 +24,7 @@
 
 **Limites.** Não há transações reais, destinatários Pix externos, boletos bancários válidos, cartões utilizáveis ou compras parceladas nesta primeira versão. Os módulos e agregados de DDD serão definidos conforme os fluxos forem implementados, mantendo a documentação ligada ao código.
 
-**Estado:** requisitos iniciais registrados; código ainda não iniciado. Próximo card: preparar a aplicação Java/Spring Boot.
+**Estado:** requisitos iniciais definidos e base executável criada com Java 21, Spring Boot 4.1.1 e Maven; teste inicial passou. Próximo card: cadastro, conta e extrato de demonstração.
 
 ## English
 
@@ -50,4 +50,4 @@
 
 **Boundaries.** This first version has no real transactions, external Pix recipients, valid bank bills, usable cards, or installment purchases. DDD modules and aggregates will be defined as flows are implemented so the documentation stays connected to the code.
 
-**Status:** initial requirements recorded; code has not started. Next card: prepare the Java/Spring Boot application.
+**Status:** initial requirements defined and a runnable foundation created with Java 21, Spring Boot 4.1.1, and Maven; the initial test passed. Next card: registration, account, and demo statement.
