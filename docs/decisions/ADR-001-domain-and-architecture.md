@@ -1,28 +1,54 @@
 # ADR-001 — Domínio e arquitetura / Domain and architecture
 
 **Data / Date:** 2026-09-25  
-**Estado / Status:** proposta para revisão / proposed for review
+**Estado / Status:** proposta arquitetural para revisão / architectural proposal for review
 
 ## Português
 
-**Contexto.** O repositório já tem escopo e uma base executável, mas ainda não tem funcionalidades bancárias. É o momento de fixar limites e regras antes de expandir o código.
+### Contexto
 
-**Escolhas confirmadas pela autora:** (1) saldo persistido com movimentações imutáveis; (2) PostgreSQL com migrações Flyway; (3) login antes de operações bancárias expostas; (4) faturas por ciclos mensais. A data de fechamento e vencimento proposta em [domain.md](../domain.md) ainda precisa de revisão.
+O repositório tem escopo e uma base Spring Boot executável, mas ainda não implementa funcionalidades bancárias. Precisamos registrar limites do domínio, consistência e padrões antes de ampliar o código.
 
-**Proposta arquitetural:** um monólito modular, com contextos Acesso, Contas, Pagamentos e Cartões; domínio separado de adaptadores HTTP e banco; casos de uso coordenam transações locais. Ver [domain.md](../domain.md) e [architecture.md](../architecture.md) para termos, regras e padrões. A separação será introduzida com os casos de uso, sem criar classes vazias para todos os módulos agora.
+### Decisões de produto confirmadas
 
-**Motivos e consequências.** Um banco único permite transferências internas, pagamentos e faturamento com alterações atômicas. Movimentações preservam o extrato enquanto o saldo persistido mantém consultas simples. Flyway registra a evolução do esquema junto ao código. A modelagem mensal do cartão exige regras de calendário e testes de virada de mês. Fronteiras de módulo reduzem acoplamento; verificá-las em testes é uma etapa posterior. Padrões adicionais dependerão de uma necessidade concreta.
+1. Saldo persistido com movimentações imutáveis no extrato.
+2. PostgreSQL com mudanças de esquema versionadas por Flyway.
+3. Login e autorização antes de expor operações bancárias; aplicação local com sessão HTTP.
+4. Fatura mensal: fecha no último dia do mês, vence no dia 10 do mês seguinte e inicialmente só aceita pagamento integral.
 
-**Pendências de revisão:** confirmar ou ajustar fechamento no fim do mês, vencimento no dia 10 do mês seguinte e sessão HTTP como mecanismo inicial de autenticação. Este ADR não declara esses detalhes como implementação concluída.
+### Arquitetura e padrões selecionados para implementação
+
+Um monólito modular com **Acesso, Contas, Pagamentos e Cartões**, organizados internamente em domínio, aplicação e adaptadores. Usaremos **Aggregate, Value Object, Application Service, Repository, Adapter e métodos estáticos de criação com nomes de domínio**. As regras exatas estão em [domain.md](../domain.md), e o propósito e a localização de cada padrão em [architecture.md](../architecture.md). Introduziremos as classes com os casos de uso, sem estrutura vazia antecipada.
+
+### Motivos e consequências
+
+Um único banco permite transações locais atômicas entre contas, cobrança e fatura. Movimentações preservam o extrato enquanto o saldo persistido facilita a consulta. Flyway registra a evolução do esquema junto ao código. O ciclo mensal exige relógio controlável e testes na virada do mês. A sessão HTTP exige validação de titularidade e proteção CSRF. Limites de módulo impedem acesso direto às entidades JPA de outro contexto.
+
+Strategy, classes State, Observer para mudanças financeiras, microsserviços, filas, saga, CQRS e event sourcing não entram no primeiro recorte porque as regras atuais não exigem suas variações ou distribuição. Spring Modulith pode ser adotado depois para verificar os limites, sem alterar a escolha pelo monólito modular.
+
+**Implementação:** pendente. Este ADR registra decisões e proposta de desenho, sem declarar banco, segurança ou padrões como já implementados.
 
 ## English
 
-**Context.** The repository has a product scope and a runnable foundation, but no banking features yet. Boundaries and rules can be reviewed before code grows.
+### Context
 
-**Author-confirmed choices:** (1) persisted balance plus immutable entries; (2) PostgreSQL and Flyway migrations; (3) login before financial operations are exposed; (4) monthly billing cycles. The proposed closing and due dates in [domain.md](../domain.md) still need review.
+The repository has a product scope and a runnable Spring Boot foundation, but no banking features yet. Domain boundaries, consistency, and patterns need to be recorded before code grows.
 
-**Architectural proposal:** a modular monolith with Access, Accounts, Payments, and Cards contexts; the domain is separated from HTTP and database adapters; use cases coordinate local transactions. [domain.md](../domain.md) and [architecture.md](../architecture.md) hold the vocabulary, rules, and patterns. Module structure grows with implemented use cases rather than empty scaffolding.
+### Confirmed product decisions
 
-**Rationale and consequences.** A single database allows atomic internal transfers and payments. Immutable entries preserve statements while a stored balance makes queries simple. Flyway records schema changes alongside code. Monthly billing requires time rules and month-boundary tests. Module boundaries reduce coupling and can later be verified automatically. Additional patterns need a concrete use case.
+1. Persisted balance plus immutable statement entries.
+2. PostgreSQL with schema changes versioned by Flyway.
+3. Login and authorization before exposing financial operations; a local application with HTTP sessions.
+4. Monthly invoices: close on the last day of the month, are due on the 10th of the following month, and initially accept full payment only.
 
-**Open for review:** month-end closing, the following month's 10th as due date, and HTTP sessions as the initial authentication mechanism. This ADR does not claim those details are implemented.
+### Architecture and patterns selected for implementation
+
+A modular monolith with **Access, Accounts, Payments, and Cards**, each organized internally into domain, application, and adapters. We will use **Aggregate, Value Object, Application Service, Repository, Adapter, and explicitly named static creation methods**. Exact rules are in [domain.md](../domain.md); each pattern's purpose and location are in [architecture.md](../architecture.md). Classes will be added with real use cases rather than empty scaffolding.
+
+### Rationale and consequences
+
+One database supports atomic local transactions across accounts, bills, and invoices. Entries preserve statements while a stored balance makes queries simple. Flyway records schema changes with the code. Monthly billing needs a controllable clock and month-boundary tests. HTTP sessions require ownership checks and CSRF protection. Module boundaries prevent direct access to another context's JPA entities.
+
+Strategy, State classes, Observer for financial changes, microservices, queues, saga, CQRS, and event sourcing are outside the initial scope because current rules require neither their variants nor distribution. Spring Modulith can be added later to verify the boundaries without changing the modular monolith decision.
+
+**Implementation:** pending. This ADR records choices and a proposed design; it does not claim that the database, security, or patterns are implemented already.
