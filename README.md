@@ -8,7 +8,7 @@ Projeto individual em Java e Spring Boot para praticar modelagem de domínio, AP
 
 **Escopo planejado:** cadastro e conta em BRL; crédito de demonstração manual; Pix simulado entre usuários do app; pagamento de boletos fictícios; cartão virtual com compras à vista, limite e fatura.
 
-**Estado atual:** [escopo inicial definido](docs/scope.md) e base executável criada com Java 21, Spring Boot 4.1.1 e Maven. O teste inicial passou; os fluxos bancários ainda não foram implementados. O trabalho é acompanhado pelos [cards do projeto](../../issues).
+**Estado atual:** [escopo inicial definido](docs/scope.md), [modelo de domínio](docs/domain.md), [arquitetura e padrões](docs/architecture.md) e [ADR-001](docs/decisions/ADR-001-domain-and-architecture.md) propostos para revisão. A base executável usa Java 21, Spring Boot 4.1.1 e Maven. O teste inicial passou; os fluxos bancários ainda não foram implementados. O trabalho é acompanhado pelos [cards do projeto](../../issues).
 
 ### Execução local
 
@@ -22,7 +22,7 @@ A solo Java and Spring Boot project to practice domain modeling, APIs, testing, 
 
 **Planned scope:** registration and a BRL account; manual demo funds; simulated Pix between app users; fictional bill payments; a virtual card with single-payment purchases, a limit, and an invoice.
 
-**Current status:** [initial scope defined](docs/scope.md) and a runnable foundation created with Java 21, Spring Boot 4.1.1, and Maven. The initial test passed; banking flows are not implemented yet. Work is tracked in the [project cards](../../issues).
+**Current status:** [initial scope defined](docs/scope.md), with a [domain model](docs/domain.md), [architecture and patterns](docs/architecture.md), and [ADR-001](docs/decisions/ADR-001-domain-and-architecture.md) proposed for review. The runnable foundation uses Java 21, Spring Boot 4.1.1, and Maven. The initial test passed; banking flows are not implemented yet. Work is tracked in the [project cards](../../issues).
 
 ### Run locally
 
