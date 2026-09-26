@@ -12,7 +12,9 @@
 | --- | --- |
 | Pix | Apenas entre contas cadastradas na aplicação. |
 | Saldo de teste | Crédito manual de demonstração, registrado no extrato. |
-| Cartão inicial | Compras à vista, limite disponível e pagamento integral da fatura. |
+| Cartão inicial | Compras à vista, limite disponível e pagamento integral da fatura em ciclos mensais. |
+| Persistência | PostgreSQL com mudanças no esquema versionadas por Flyway. |
+| Acesso | Login e verificação de titularidade antes de expor operações bancárias. |
 | Boleto | Cobrança fictícia criada no app, com identificador que não é uma linha digitável bancária válida. |
 
 ### Regras do primeiro recorte
@@ -22,7 +24,7 @@
 - Um boleto fictício pago não pode ser pago novamente.
 - Uma compra no cartão utiliza limite e entra na fatura; ela não debita o saldo da conta no momento da compra. Pagar a fatura integralmente usa o saldo da conta.
 
-**Limites.** Não há transações reais, destinatários Pix externos, boletos bancários válidos, cartões utilizáveis ou compras parceladas nesta primeira versão. Os módulos e agregados de DDD serão definidos conforme os fluxos forem implementados, mantendo a documentação ligada ao código.
+**Limites.** Não há transações reais, destinatários Pix externos, boletos bancários válidos, cartões utilizáveis ou compras parceladas nesta primeira versão. O [modelo de domínio](domain.md) e a [arquitetura](architecture.md) propõem módulos, agregados e padrões antes da implementação. As datas do ciclo de fatura ainda estão em revisão.
 
 **Estado:** requisitos iniciais definidos e base executável criada com Java 21, Spring Boot 4.1.1 e Maven; teste inicial passou. Próximo card: cadastro, conta e extrato de demonstração.
 
@@ -38,7 +40,9 @@
 | --- | --- |
 | Pix | Only between accounts registered in the application. |
 | Demo balance | Manual demo credit, recorded in the account statement. |
-| Initial card | Single-payment purchases, available limit, and full invoice payment. |
+| Initial card | Single-payment purchases, available limit, and full invoice payment in monthly cycles. |
+| Persistence | PostgreSQL with schema changes versioned by Flyway. |
+| Access | Login and ownership checks before exposing financial operations. |
 | Bill | Fictional bill created in the app, with an identifier that is not a valid bank payment line. |
 
 ### Rules for the first scope
@@ -48,6 +52,6 @@
 - A paid fictional bill cannot be paid again.
 - A card purchase uses the limit and appears on the invoice; it does not debit the account balance at purchase time. Full invoice payment uses the account balance.
 
-**Boundaries.** This first version has no real transactions, external Pix recipients, valid bank bills, usable cards, or installment purchases. DDD modules and aggregates will be defined as flows are implemented so the documentation stays connected to the code.
+**Boundaries.** This first version has no real transactions, external Pix recipients, valid bank bills, usable cards, or installment purchases. The [domain model](domain.md) and [architecture](architecture.md) propose modules, aggregates, and patterns before implementation. Billing cycle dates remain under review.
 
 **Status:** initial requirements defined and a runnable foundation created with Java 21, Spring Boot 4.1.1, and Maven; the initial test passed. Next card: registration, account, and demo statement.
