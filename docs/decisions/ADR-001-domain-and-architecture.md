@@ -1,13 +1,13 @@
 # ADR-001 — Domínio e arquitetura / Domain and architecture
 
 **Data / Date:** 2026-09-25  
-**Estado / Status:** proposta arquitetural para revisão / architectural proposal for review
+**Estado / Status:** aceito; primeira etapa implementada em Acesso e Contas / accepted; first stage implemented in Access and Accounts
 
 ## Português
 
 ### Contexto
 
-O repositório tem escopo e uma base Spring Boot executável, mas ainda não implementa funcionalidades bancárias. Precisamos registrar limites do domínio, consistência e padrões antes de ampliar o código.
+Na data desta decisão, o repositório tinha escopo e uma base Spring Boot executável, sem funcionalidades bancárias. Precisávamos registrar limites do domínio, consistência e padrões antes de ampliar o código.
 
 ### Decisões de produto confirmadas
 
@@ -26,13 +26,13 @@ Um único banco permite transações locais atômicas entre contas, cobrança e 
 
 Strategy, classes State, Observer para mudanças financeiras, microsserviços, filas, saga, CQRS e event sourcing não entram no primeiro recorte porque as regras atuais não exigem suas variações ou distribuição. Spring Modulith pode ser adotado depois para verificar os limites, sem alterar a escolha pelo monólito modular.
 
-**Implementação:** pendente. Este ADR registra decisões e proposta de desenho, sem declarar banco, segurança ou padrões como já implementados.
+**Implementação atual:** Acesso e Contas aplicam essas decisões com PostgreSQL, Flyway e segurança por sessão. Pagamentos, Cartões e suas regras continuam previstos em [architecture.md](../architecture.md). Testes H2 e PostgreSQL aprovados no JDK 21 com Docker em 26/09/2026.
 
 ## English
 
 ### Context
 
-The repository has a product scope and a runnable Spring Boot foundation, but no banking features yet. Domain boundaries, consistency, and patterns need to be recorded before code grows.
+When this decision was made, the repository had a product scope and a runnable Spring Boot foundation, without banking features. Domain boundaries, consistency, and patterns needed to be recorded before the code grew.
 
 ### Confirmed product decisions
 
@@ -51,4 +51,4 @@ One database supports atomic local transactions across accounts, bills, and invo
 
 Strategy, State classes, Observer for financial changes, microservices, queues, saga, CQRS, and event sourcing are outside the initial scope because current rules require neither their variants nor distribution. Spring Modulith can be added later to verify the boundaries without changing the modular monolith decision.
 
-**Implementation:** pending. This ADR records choices and a proposed design; it does not claim that the database, security, or patterns are implemented already.
+**Current implementation:** Access and Accounts apply these decisions with PostgreSQL, Flyway, and session security. Payments, Cards, and their rules remain planned in [architecture.md](../architecture.md). H2 and PostgreSQL tests passed on JDK 21 with Docker on 26 September 2026.

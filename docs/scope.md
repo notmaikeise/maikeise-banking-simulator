@@ -29,7 +29,7 @@ Projeto individual de estudo e portfólio: construir localmente, em Java e Sprin
 
 **Limites da simulação:** sem dinheiro real, Pix externo, boleto bancário válido, cartão utilizável, compra parcelada ou integração com rede bancária.
 
-**Estado atual:** escopo definido e base executável com Java 21, Spring Boot 4.1.1 e Maven; o teste inicial passou. Os documentos de domínio, arquitetura e padrões estão em revisão. Nenhum fluxo bancário foi implementado. Próxima etapa de código: cadastro, conta e extrato de demonstração, com login antes de expor operações.
+**Estado atual:** cadastro, sessão, conta, crédito de demonstração e extrato implementados; testes H2 e PostgreSQL aprovados no JDK 21 com Docker em 26/09/2026. Pix, boletos, cartões e interface são as próximas etapas. Consulte o [guia da API](api-guide.md) e a [arquitetura](architecture.md).
 
 ## English
 
@@ -60,4 +60,4 @@ A solo study and portfolio project: build a locally runnable fictional bank simu
 
 **Simulation boundaries:** no real money, external Pix, valid bank bill, usable card, installment purchase, or banking network integration.
 
-**Current state:** scope defined and a runnable Java 21, Spring Boot 4.1.1, and Maven foundation; the initial test passed. Domain, architecture, and pattern documents are under review. No banking flow has been implemented. The next coding stage covers registration, account, and demo statement, with login before operations are exposed.
+**Current state:** registration, session login, account, demo funding, and statement are implemented; H2 and PostgreSQL tests passed on JDK 21 with Docker on 26 September 2026. Internal Pix, bills, cards, and the interface are next. See the [API guide](api-guide.md) and [architecture](architecture.md).

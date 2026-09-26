@@ -9,17 +9,20 @@
 
 <br>
 
-<img src="https://raw.githubusercontent.com/devicons/devicon/v2.17.0/icons/java/java-original.svg" width="42" height="42" alt="Java">
-&nbsp;&nbsp;
-<img src="https://raw.githubusercontent.com/devicons/devicon/v2.17.0/icons/spring/spring-original.svg" width="42" height="42" alt="Spring Boot">
-&nbsp;&nbsp;
-<img src="https://raw.githubusercontent.com/devicons/devicon/v2.17.0/icons/maven/maven-original.svg" width="42" height="42" alt="Apache Maven">
-&nbsp;&nbsp;
-<img src="https://raw.githubusercontent.com/devicons/devicon/v2.17.0/icons/junit/junit-original.svg" width="42" height="42" alt="JUnit 5">
+<table>
+<tr>
+<td align="center"><img src="https://raw.githubusercontent.com/devicons/devicon/v2.17.0/icons/java/java-original.svg" width="42" height="42" alt="Java"><br><sub>Java 21</sub></td>
+<td align="center"><img src="https://raw.githubusercontent.com/devicons/devicon/v2.17.0/icons/spring/spring-original.svg" width="42" height="42" alt="Spring"><br><sub>Spring Boot</sub></td>
+<td align="center"><img src="https://raw.githubusercontent.com/devicons/devicon/v2.17.0/icons/postgresql/postgresql-original.svg" width="42" height="42" alt="PostgreSQL"><br><sub>PostgreSQL</sub></td>
+<td align="center"><img src="https://raw.githubusercontent.com/devicons/devicon/v2.17.0/icons/docker/docker-original.svg" width="42" height="42" alt="Docker"><br><sub>Docker</sub></td>
+<td align="center"><img src="https://raw.githubusercontent.com/devicons/devicon/v2.17.0/icons/maven/maven-original.svg" width="42" height="42" alt="Maven"><br><sub>Maven</sub></td>
+<td align="center"><img src="https://raw.githubusercontent.com/devicons/devicon/v2.17.0/icons/junit/junit-original.svg" width="42" height="42" alt="JUnit"><br><sub>JUnit 5</sub></td>
+</tr>
+</table>
 
 <br>
 
-**Java 21 · Spring Boot 4.1.1 · Maven Wrapper · JUnit 5**
+**Java 21 · Spring Boot 4.1.1 · PostgreSQL 17 · Docker Compose · Flyway · Spring Security · Testcontainers**
 
 </div>
 
@@ -38,13 +41,24 @@ Projeto individual de estudo e portfólio para praticar **modelagem de domínio 
 | Etapa | Estado |
 | --- | --- |
 | Escopo, regras iniciais e base Spring Boot executável | Concluídos |
-| Modelo DDD, arquitetura e padrões | [Documentados para revisão](docs/decisions/ADR-001-domain-and-architecture.md) |
-| Cadastro, login, conta, crédito de demonstração e extrato | Planejados |
+| Modelo DDD, arquitetura e padrões | [Definidos e documentados](docs/decisions/ADR-001-domain-and-architecture.md) |
+| Cadastro, login, conta, crédito de demonstração e extrato | Implementados; testes com H2 e PostgreSQL aprovados no JDK 21 |
 | Pix interno simulado e boletos fictícios | Planejados |
 | Cartão virtual, limite e fatura mensal | Planejados |
 | Interface | Planejada após os fluxos do domínio |
 
-**O que funciona hoje:** a aplicação inicia e o teste inicial de carregamento passa. Ainda não existem endpoints bancários, autenticação nem banco de dados configurado. PostgreSQL, Flyway e Spring Security foram escolhidos para a implementação futura, mas **ainda não foram adicionados ao projeto**.
+**O que esta etapa acrescenta:** API de cadastro, login por sessão HTTP, conta em BRL, crédito fictício idempotente e extrato. PostgreSQL guarda os dados, Flyway cria as tabelas e Spring Security protege as operações. Os testes `mvnw test` e `mvnw verify -Ppostgres-tests` passaram no JDK 21 com Docker em 26/09/2026.
+
+### Tecnologias utilizadas
+
+| Área | Tecnologia | Uso nesta etapa |
+| --- | --- | --- |
+| Linguagem e aplicação | Java 21, Spring Boot 4.1.1, Spring Web MVC, Jackson e Jakarta Validation | API HTTP, JSON e validação das entradas. |
+| Segurança | Spring Security e BCrypt | Login por sessão HTTP, senha com hash e proteção CSRF. |
+| Dados | PostgreSQL 17, Spring Data JPA (Hibernate) e Flyway | Persistência da aplicação e migração SQL versionada. |
+| Ambiente local | Docker Desktop e Docker Compose | Executar o PostgreSQL localmente sem instalação separada do banco. |
+| Testes | JUnit 5, MockMvc, H2 e Testcontainers | Testes rápidos com H2 e teste de concorrência num PostgreSQL temporário. |
+| Build | Maven Wrapper, Maven Surefire e Maven Failsafe | Compilar, rodar os testes comuns e o teste de integração PostgreSQL. |
 
 ### Decisões de modelagem
 
@@ -55,16 +69,29 @@ Projeto individual de estudo e portfólio para praticar **modelagem de domínio 
 
 As regras detalhadas e os motivos de cada escolha estão na [documentação](#documentacao).
 
-### Executar localmente
+### Executar localmente (Windows / PowerShell)
 
-Requer **JDK 21**. O projeto inclui o Maven Wrapper, portanto não exige instalar o Maven separadamente.
+Requer **JDK 21** e **Docker Desktop** rodando com suporte a Docker Compose. O Maven Wrapper já vem no projeto. Na pasta raiz, execute nesta ordem:
 
-| Sistema | Testar | Iniciar |
-| --- | --- | --- |
-| Windows | `.\mvnw.cmd test` | `.\mvnw.cmd spring-boot:run` |
-| macOS / Linux | `bash ./mvnw test` | `bash ./mvnw spring-boot:run` |
+1. `docker compose up -d` — inicia apenas o PostgreSQL local. Espere ficar saudável.
+2. `.\mvnw.cmd test` — executa testes de domínio e HTTP com H2; este comando também funciona sem Docker.
+3. `.\mvnw.cmd verify -Ppostgres-tests` — inclui o teste concorrente com PostgreSQL em Testcontainers; precisa de Docker.
+4. `.\mvnw.cmd spring-boot:run` — inicia a API em `http://localhost:8080`.
 
-Execute os comandos na raiz do repositório. Ainda não há telas ou endpoints bancários para acessar após iniciar.
+macOS/Linux: use `./mvnw` nos comandos 2 a 4. Se já tiver PostgreSQL próprio, configure `DB_URL`, `DB_USER` e `DB_PASSWORD` e dispense o Compose para iniciar a aplicação. As credenciais do `compose.yaml` são **somente para desenvolvimento local**; não publique este banco na internet.
+
+### Experimentar a API
+
+Não há interface gráfica nesta etapa. Veja o [guia da API](docs/api-guide.md) para cadastro, login com cookie de sessão, token CSRF, crédito e extrato. Todas as operações financeiras são de demonstração.
+
+| Método e caminho | Função |
+| --- | --- |
+| `GET /api/csrf` | Obtém o token CSRF da sessão. |
+| `POST /api/users` | Cadastra usuário e abre uma conta de saldo zero. |
+| `POST /login` | Entra usando email e senha; mantém uma sessão HTTP. |
+| `GET /api/accounts/me` | Consulta sua própria conta e saldo. |
+| `POST /api/accounts/me/demo-credits` | Adiciona crédito fictício com `Idempotency-Key`. |
+| `GET /api/accounts/me/entries` | Lista seu extrato, com `page` e `size`. |
 
 **Limite da simulação:** não há dinheiro real, Pix externo, linha digitável válida, cartão utilizável nem integração com redes bancárias.
 
@@ -83,13 +110,24 @@ A solo study and portfolio project to practice **domain modeling (DDD)**, archit
 | Stage | Status |
 | --- | --- |
 | Scope, initial rules, and runnable Spring Boot foundation | Completed |
-| DDD model, architecture, and patterns | [Documented for review](docs/decisions/ADR-001-domain-and-architecture.md) |
-| Registration, login, account, demo funding, and statement | Planned |
+| DDD model, architecture, and patterns | [Defined and documented](docs/decisions/ADR-001-domain-and-architecture.md) |
+| Registration, login, account, demo funding, and statement | Implemented; H2 and PostgreSQL tests passed on JDK 21 |
 | Simulated internal Pix and fictional bills | Planned |
 | Virtual card, limit, and monthly invoice | Planned |
 | Interface | Planned after the domain flows |
 
-**What works today:** the application starts and its initial context-loading test passes. There are no banking endpoints, authentication, or database configuration yet. PostgreSQL, Flyway, and Spring Security have been selected for later implementation but **have not been added to the project**.
+**This stage adds:** registration, HTTP session login, BRL account, idempotent demo funding, and statement APIs. PostgreSQL stores the data, Flyway creates the tables, and Spring Security protects the operations. `mvnw test` and `mvnw verify -Ppostgres-tests` passed on JDK 21 with Docker on 26 September 2026.
+
+### Technologies used
+
+| Area | Technology | Role in this stage |
+| --- | --- | --- |
+| Language and application | Java 21, Spring Boot 4.1.1, Spring Web MVC, Jackson, and Jakarta Validation | HTTP API, JSON, and request validation. |
+| Security | Spring Security and BCrypt | HTTP session login, hashed passwords, and CSRF protection. |
+| Data | PostgreSQL 17, Spring Data JPA (Hibernate), and Flyway | Application persistence and versioned SQL migrations. |
+| Local environment | Docker Desktop and Docker Compose | Run PostgreSQL locally without a separate database installation. |
+| Tests | JUnit 5, MockMvc, H2, and Testcontainers | Fast H2 tests and a concurrency test against temporary PostgreSQL. |
+| Build | Maven Wrapper, Maven Surefire, and Maven Failsafe | Compile and run regular and PostgreSQL integration tests. |
 
 ### Modeling decisions
 
@@ -102,14 +140,27 @@ Detailed rules and the reasoning behind each choice are in the [documentation](#
 
 ### Run locally
 
-Requires **JDK 21**. The Maven Wrapper is included, so a separate Maven installation is unnecessary.
+Requires **JDK 21** and a running **Docker Desktop** with Docker Compose. Maven is included through the wrapper. From the repository root:
 
-| System | Test | Start |
-| --- | --- | --- |
-| Windows | `.\mvnw.cmd test` | `.\mvnw.cmd spring-boot:run` |
-| macOS / Linux | `bash ./mvnw test` | `bash ./mvnw spring-boot:run` |
+1. `docker compose up -d` — starts the local PostgreSQL database.
+2. `.\mvnw.cmd test` — runs domain and HTTP tests using H2; Docker is optional for this step.
+3. `.\mvnw.cmd verify -Ppostgres-tests` — includes the concurrent PostgreSQL Testcontainers test; Docker is required.
+4. `.\mvnw.cmd spring-boot:run` — starts the API at `http://localhost:8080`.
 
-Run these commands from the repository root. There are no screens or banking endpoints to visit after startup yet.
+On macOS/Linux, use `./mvnw` for steps 2–4. If PostgreSQL is already installed, set `DB_URL`, `DB_USER`, and `DB_PASSWORD` instead of using Compose to start the application. The credentials in `compose.yaml` are **for local development only**.
+
+### Try the API
+
+There is no graphical interface yet. Follow the [API guide](docs/api-guide.md) for registration, session login, CSRF token, demo funding, and statements. Financial operations are fictional.
+
+| Method and path | Purpose |
+| --- | --- |
+| `GET /api/csrf` | Fetch the current session's CSRF token. |
+| `POST /api/users` | Register a user and create a zero-balance account. |
+| `POST /login` | Sign in with email and password using an HTTP session. |
+| `GET /api/accounts/me` | Read your account and balance. |
+| `POST /api/accounts/me/demo-credits` | Add fictional funds with an `Idempotency-Key`. |
+| `GET /api/accounts/me/entries` | Read your statement with `page` and `size`. |
 
 **Simulation boundary:** no real money, external Pix, valid bank payment line, usable card, or banking network integration.
 
@@ -124,6 +175,7 @@ Run these commands from the repository root. There are no screens or banking end
 | [Escopo / Scope](docs/scope.md) | Jornada, regras e limites / User journey, rules, and boundaries |
 | [Domínio / Domain](docs/domain.md) | Contextos, agregados e invariantes / Contexts, aggregates, and invariants |
 | [Arquitetura / Architecture](docs/architecture.md) | Módulos, padrões, transações e testes / Modules, patterns, transactions, and tests |
+| [Guia da API / API guide](docs/api-guide.md) | Cadastro e uso da API / Registration and API usage |
 | [ADR-001](docs/decisions/ADR-001-domain-and-architecture.md) | Registro das decisões / Decision record |
 | [Cards / Issues](../../issues) | Etapas de desenvolvimento / Development stages |
 
