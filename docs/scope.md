@@ -2,56 +2,62 @@
 
 ## Português
 
-**Objetivo.** Construir, individualmente, um simulador bancário local para estudar Java, Spring Boot, DDD, persistência, segurança e testes com funcionalidades implementadas aos poucos.
+### Objetivo e jornada
 
-**Jornada planejada.** Uma pessoa fictícia se cadastra, consulta sua conta em BRL, adiciona saldo de demonstração, transfere a outro usuário do app, paga um boleto criado para teste, simula uma compra no cartão e paga a fatura com saldo da conta.
+Projeto individual de estudo e portfólio: construir localmente, em Java e Spring Boot, um simulador de banco fictício para praticar modelagem de domínio, persistência, segurança e testes. Uma pessoa fictícia se cadastra, entra na sua conta em BRL, adiciona saldo de demonstração, transfere para outra pessoa do app, paga uma cobrança de teste, compra com cartão virtual e quita a fatura.
 
-### Decisões iniciais
+### Decisões do produto
 
 | Tema | Decisão |
 | --- | --- |
-| Pix | Apenas entre contas cadastradas na aplicação. |
+| Acesso | Login e autorização por sessão HTTP na aplicação local. |
+| Conta | Uma conta em BRL por usuário, com saldo persistido e movimentações imutáveis. |
 | Saldo de teste | Crédito manual de demonstração, registrado no extrato. |
-| Cartão inicial | Compras à vista, limite disponível e pagamento integral da fatura em ciclos mensais. |
-| Persistência | PostgreSQL com mudanças no esquema versionadas por Flyway. |
-| Acesso | Login e verificação de titularidade antes de expor operações bancárias. |
-| Boleto | Cobrança fictícia criada no app, com identificador que não é uma linha digitável bancária válida. |
+| Pix | Apenas entre contas cadastradas no app. |
+| Boleto | Cobrança fictícia criada no app; identificador sem linha digitável bancária válida. |
+| Cartão | Compras à vista usam limite e entram em faturas mensais. |
+| Fatura | Fecha no último dia do mês, vence no dia 10 seguinte e inicialmente só pode ser paga integralmente. |
+| Persistência | PostgreSQL com evolução do esquema por migrações Flyway. |
 
-### Regras do primeiro recorte
+### Regras e limites
 
-- Valores em BRL devem ser positivos nas operações e ter até duas casas decimais. O saldo da conta não pode ficar negativo.
-- Uma transferência interna debita uma conta e credita outra com o mesmo valor. Uma repetição da mesma solicitação não pode transferir duas vezes.
-- Um boleto fictício pago não pode ser pago novamente.
-- Uma compra no cartão utiliza limite e entra na fatura; ela não debita o saldo da conta no momento da compra. Pagar a fatura integralmente usa o saldo da conta.
+- Operações usam valores positivos em BRL com até duas casas decimais. Conta não fica com saldo negativo.
+- Pix interno debita origem e credita destino pelo mesmo valor na mesma transação. Repetir a solicitação não transfere novamente.
+- Uma cobrança paga não pode ser paga de novo.
+- Compra no cartão ocupa limite e entra na fatura; não debita a conta naquele momento. Pagar fatura integralmente debita a conta e libera o limite correspondente.
+- Usuários acessam apenas os próprios recursos. Os detalhes de contextos, agregados e transações estão no [modelo de domínio](domain.md); arquitetura e padrões estão em [architecture.md](architecture.md).
 
-**Limites.** Não há transações reais, destinatários Pix externos, boletos bancários válidos, cartões utilizáveis ou compras parceladas nesta primeira versão. O [modelo de domínio](domain.md) e a [arquitetura](architecture.md) propõem módulos, agregados e padrões antes da implementação. As datas do ciclo de fatura ainda estão em revisão.
+**Limites da simulação:** sem dinheiro real, Pix externo, boleto bancário válido, cartão utilizável, compra parcelada ou integração com rede bancária.
 
-**Estado:** requisitos iniciais definidos e base executável criada com Java 21, Spring Boot 4.1.1 e Maven; teste inicial passou. Próximo card: cadastro, conta e extrato de demonstração.
+**Estado atual:** escopo definido e base executável com Java 21, Spring Boot 4.1.1 e Maven; o teste inicial passou. Os documentos de domínio, arquitetura e padrões estão em revisão. Nenhum fluxo bancário foi implementado. Próxima etapa de código: cadastro, conta e extrato de demonstração, com login antes de expor operações.
 
 ## English
 
-**Goal.** Build a locally runnable banking simulator solo to study Java, Spring Boot, DDD, persistence, security, and testing while adding features in small steps.
+### Goal and journey
 
-**Planned journey.** A fictional user registers, checks a BRL account, adds demo funds, transfers to another app user, pays a bill created for testing, simulates a card purchase, and pays the invoice using the account balance.
+A solo study and portfolio project: build a locally runnable fictional bank simulator in Java and Spring Boot to practice domain modeling, persistence, security, and testing. A fictional user registers, logs into a BRL account, adds demo funds, transfers to another app user, pays a test bill, makes a virtual card purchase, and pays the invoice.
 
-### Initial decisions
+### Product decisions
 
 | Topic | Decision |
 | --- | --- |
-| Pix | Only between accounts registered in the application. |
-| Demo balance | Manual demo credit, recorded in the account statement. |
-| Initial card | Single-payment purchases, available limit, and full invoice payment in monthly cycles. |
-| Persistence | PostgreSQL with schema changes versioned by Flyway. |
-| Access | Login and ownership checks before exposing financial operations. |
-| Bill | Fictional bill created in the app, with an identifier that is not a valid bank payment line. |
+| Access | Login and authorization with HTTP sessions in the local application. |
+| Account | One BRL account per user, with a persisted balance and immutable entries. |
+| Demo funds | Manual demo credit, recorded in the statement. |
+| Pix | Only between accounts registered in the app. |
+| Bill | Fictional bill created in the app; identifier without a valid bank payment line. |
+| Card | Single-payment purchases use limit and enter monthly invoices. |
+| Invoice | Closes on the last day of the month, is due on the following month's 10th, and initially accepts full payment only. |
+| Persistence | PostgreSQL with schema evolution through Flyway migrations. |
 
-### Rules for the first scope
+### Rules and boundaries
 
-- BRL amounts must be positive for operations and have at most two decimal places. The account balance cannot become negative.
-- An internal transfer debits one account and credits another by the same amount. Retrying the same request must not transfer twice.
-- A paid fictional bill cannot be paid again.
-- A card purchase uses the limit and appears on the invoice; it does not debit the account balance at purchase time. Full invoice payment uses the account balance.
+- Operations use positive BRL amounts with at most two decimal places. Account balance cannot be negative.
+- Internal Pix debits the source and credits the destination by the same amount in one transaction. Retrying the request cannot transfer again.
+- A paid bill cannot be paid again.
+- A card purchase uses limit and enters an invoice; it does not debit the account at purchase time. Full invoice payment debits the account and releases the matching limit.
+- Users access only their own resources. Contexts, aggregates, and transactions are in the [domain model](domain.md); architecture and patterns are in [architecture.md](architecture.md).
 
-**Boundaries.** This first version has no real transactions, external Pix recipients, valid bank bills, usable cards, or installment purchases. The [domain model](domain.md) and [architecture](architecture.md) propose modules, aggregates, and patterns before implementation. Billing cycle dates remain under review.
+**Simulation boundaries:** no real money, external Pix, valid bank bill, usable card, installment purchase, or banking network integration.
 
-**Status:** initial requirements defined and a runnable foundation created with Java 21, Spring Boot 4.1.1, and Maven; the initial test passed. Next card: registration, account, and demo statement.
+**Current state:** scope defined and a runnable Java 21, Spring Boot 4.1.1, and Maven foundation; the initial test passed. Domain, architecture, and pattern documents are under review. No banking flow has been implemented. The next coding stage covers registration, account, and demo statement, with login before operations are exposed.
