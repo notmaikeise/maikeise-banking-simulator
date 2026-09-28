@@ -19,7 +19,7 @@ public class JpaEntryRepository implements EntryRepository {
     @Override
     public void append(AccountEntry entry) {
         entityManager.persist(new EntryEntity(entry.id(), entry.accountId(), entry.kind(),
-                entry.amount().amount(), entry.occurredAt()));
+                entry.amount().amount(), entry.referenceId(), entry.occurredAt()));
     }
 
     @Override
@@ -28,6 +28,6 @@ public class JpaEntryRepository implements EntryRepository {
                         + "order by e.occurredAt desc, e.id desc", EntryEntity.class)
                 .setParameter("accountId", accountId).setFirstResult(offset).setMaxResults(limit)
                 .getResultList().stream().map(e -> new AccountEntry(e.id, e.accountId, e.kind,
-                        new Money(e.amount), e.occurredAt)).toList();
+                        new Money(e.amount), e.referenceId, e.occurredAt)).toList();
     }
 }

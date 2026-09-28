@@ -30,6 +30,9 @@ public final class Account {
 
     public void debit(Money amount) {
         requirePositive(amount);
+        if (balance.amount().compareTo(amount.amount()) < 0) {
+            throw new InsufficientFundsException();
+        }
         balance = balance.subtract(amount);
     }
 

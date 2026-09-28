@@ -23,16 +23,19 @@ public class EntryEntity {
     Kind kind;
     @Column(nullable = false, precision = 19, scale = 2)
     BigDecimal amount;
+    @Column(name = "reference_id")
+    UUID referenceId;
     @Column(name = "occurred_at", nullable = false)
     Instant occurredAt;
 
     protected EntryEntity() { }
 
-    EntryEntity(UUID id, UUID accountId, Kind kind, BigDecimal amount, Instant occurredAt) {
+    EntryEntity(UUID id, UUID accountId, Kind kind, BigDecimal amount, UUID referenceId, Instant occurredAt) {
         this.id = id;
         this.accountId = accountId;
         this.kind = kind;
         this.amount = amount;
+        this.referenceId = referenceId;
         this.occurredAt = occurredAt;
     }
 }

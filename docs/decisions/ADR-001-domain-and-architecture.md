@@ -1,7 +1,7 @@
 # ADR-001 — Domínio e arquitetura / Domain and architecture
 
 **Data / Date:** 2026-09-25  
-**Estado / Status:** aceito; primeira etapa implementada em Acesso e Contas / accepted; first stage implemented in Access and Accounts
+**Estado / Status:** aceito; Acesso, Contas e Pix interno de Pagamentos implementados / accepted; Access, Accounts, and Payments' internal Pix implemented
 
 ## Português
 
@@ -26,7 +26,7 @@ Um único banco permite transações locais atômicas entre contas, cobrança e 
 
 Strategy, classes State, Observer para mudanças financeiras, microsserviços, filas, saga, CQRS e event sourcing não entram no primeiro recorte porque as regras atuais não exigem suas variações ou distribuição. Spring Modulith pode ser adotado depois para verificar os limites, sem alterar a escolha pelo monólito modular.
 
-**Implementação atual:** Acesso e Contas aplicam essas decisões com PostgreSQL, Flyway e segurança por sessão. Pagamentos, Cartões e suas regras continuam previstos em [architecture.md](../architecture.md). Testes H2 e PostgreSQL aprovados no JDK 21 com Docker em 26/09/2026.
+**Implementação atual:** Acesso, Contas e o Pix de Pagamentos aplicam essas decisões com PostgreSQL, Flyway e segurança por sessão. Cobranças e Cartões continuam previstos em [architecture.md](../architecture.md). A concorrência do Pix está registrada em [ADR-002](ADR-002-internal-transfers.md). A autora executou `.\mvnw.cmd verify -Ppostgres-tests` com sucesso no JDK 21 e Docker em 27/09/2026.
 
 ## English
 
@@ -51,4 +51,4 @@ One database supports atomic local transactions across accounts, bills, and invo
 
 Strategy, State classes, Observer for financial changes, microservices, queues, saga, CQRS, and event sourcing are outside the initial scope because current rules require neither their variants nor distribution. Spring Modulith can be added later to verify the boundaries without changing the modular monolith decision.
 
-**Current implementation:** Access and Accounts apply these decisions with PostgreSQL, Flyway, and session security. Payments, Cards, and their rules remain planned in [architecture.md](../architecture.md). H2 and PostgreSQL tests passed on JDK 21 with Docker on 26 September 2026.
+**Current implementation:** Access, Accounts, and Payments' Pix flow apply these decisions with PostgreSQL, Flyway, and session security. Bills and Cards remain planned in [architecture.md](../architecture.md). Pix concurrency is recorded in [ADR-002](ADR-002-internal-transfers.md). The author successfully ran `.\mvnw.cmd verify -Ppostgres-tests` with JDK 21 and Docker on 27 September 2026.
