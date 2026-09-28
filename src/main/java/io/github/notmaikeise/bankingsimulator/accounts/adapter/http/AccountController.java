@@ -61,9 +61,10 @@ public class AccountController {
 
     public record AccountResponse(UUID accountId, BigDecimal balance, String currency) { }
 
-    public record EntryResponse(UUID entryId, String kind, BigDecimal amount, Instant occurredAt) {
+    public record EntryResponse(UUID entryId, String kind, BigDecimal amount, UUID referenceId, Instant occurredAt) {
         static EntryResponse from(AccountEntry entry) {
-            return new EntryResponse(entry.id(), entry.kind().name(), entry.amount().amount(), entry.occurredAt());
+            return new EntryResponse(entry.id(), entry.kind().name(), entry.amount().amount(),
+                    entry.referenceId(), entry.occurredAt());
         }
     }
 

@@ -8,4 +8,6 @@ public interface AccountRepository {
     void save(Account account);
     Optional<Account> findByOwner(UUID ownerId);
     Optional<Account> findByOwnerForUpdate(UUID ownerId);
+    Optional<UUID> findIdByOwner(UUID ownerId);
+    Optional<Account> findByIdForUpdate(UUID accountId);
 }

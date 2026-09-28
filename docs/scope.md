@@ -29,7 +29,7 @@ Projeto individual de estudo e portfólio: construir localmente, em Java e Sprin
 
 **Limites da simulação:** sem dinheiro real, Pix externo, boleto bancário válido, cartão utilizável, compra parcelada ou integração com rede bancária.
 
-**Estado atual:** cadastro, sessão, conta, crédito de demonstração e extrato implementados; testes H2 e PostgreSQL aprovados no JDK 21 com Docker em 26/09/2026. Pix, boletos, cartões e interface são as próximas etapas. Consulte o [guia da API](api-guide.md) e a [arquitetura](architecture.md).
+**Estado atual:** cadastro, sessão, conta, crédito de demonstração, extrato e Pix interno implementados. A autora executou `.\mvnw.cmd verify -Ppostgres-tests` com sucesso no JDK 21 e Docker em 27/09/2026, incluindo os testes de Pix. Cobranças fictícias, cartões e interface ficam para as próximas etapas. Consulte o [guia da API](api-guide.md) e a [arquitetura](architecture.md).
 
 ## English
 
@@ -60,4 +60,4 @@ A solo study and portfolio project: build a locally runnable fictional bank simu
 
 **Simulation boundaries:** no real money, external Pix, valid bank bill, usable card, installment purchase, or banking network integration.
 
-**Current state:** registration, session login, account, demo funding, and statement are implemented; H2 and PostgreSQL tests passed on JDK 21 with Docker on 26 September 2026. Internal Pix, bills, cards, and the interface are next. See the [API guide](api-guide.md) and [architecture](architecture.md).
+**Current state:** registration, session login, account, demo funding, statement, and internal Pix are implemented. The author successfully ran `.\mvnw.cmd verify -Ppostgres-tests` with JDK 21 and Docker on 27 September 2026, including the Pix tests. Fictional bills, cards, and the interface remain future stages. See the [API guide](api-guide.md) and [architecture](architecture.md).

@@ -40,6 +40,19 @@ public class JpaAccountRepository implements AccountRepository {
                 .getResultStream().findFirst().map(this::toDomain);
     }
 
+    @Override
+    public Optional<UUID> findIdByOwner(UUID ownerId) {
+        return entityManager.createQuery("select a.id from AccountEntity a where a.ownerId = :ownerId", UUID.class)
+                .setParameter("ownerId", ownerId).getResultStream().findFirst();
+    }
+
+    @Override
+    public Optional<Account> findByIdForUpdate(UUID accountId) {
+        return entityManager.createQuery("select a from AccountEntity a where a.id = :accountId", AccountEntity.class)
+                .setParameter("accountId", accountId).setLockMode(LockModeType.PESSIMISTIC_WRITE)
+                .getResultStream().findFirst().map(this::toDomain);
+    }
+
     private Account toDomain(AccountEntity entity) {
         return Account.restore(entity.id, entity.ownerId, new Money(entity.balance));
     }

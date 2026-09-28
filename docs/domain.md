@@ -1,6 +1,6 @@
 # Modelo de domínio / Domain model
 
-> **Estado / Status:** decisões de produto confirmadas em 25/09/2026. Cadastro, Conta, Dinheiro, crédito de demonstração e Movimentação têm uma primeira implementação; Pagamentos e Cartões continuam planejados. / Product decisions confirmed on 25 September 2026. Registration, Account, Money, demo funding, and Entry have an initial implementation; Payments and Cards remain planned.
+> **Estado / Status:** decisões de produto confirmadas em 25/09/2026. Cadastro, Conta, Dinheiro, crédito de demonstração, Movimentação e Transferência (Pix interno) estão implementados. Cobranças e Cartões permanecem planejados. / Product decisions confirmed on 25 September 2026. Registration, Account, Money, demo funding, Entry, and Transfer (internal Pix) are implemented. Bills and Cards remain planned.
 
 ## Português
 
@@ -53,6 +53,8 @@ Um **contexto** delimita o significado dos termos e a propriedade dos dados. Um 
 O Pix interno conserva o valor entre as duas contas. Cobranças e faturas representam **saídas para liquidação fictícia**, sem crédito para outro usuário do app. Não há rede Pix, boleto ou cartão real.
 
 Cada comando que altera dinheiro ou limite recebe **chave de idempotência**. Repetir chave e dados devolve o resultado já registrado; repetir chave com dados diferentes retorna conflito. Restrição única no banco e controle de concorrência impedem execução duplicada em solicitações simultâneas. O usuário opera apenas recursos próprios; a outra parte de um Pix vê sua própria movimentação.
+
+**Implementação do Pix:** o cliente envia o ID da conta de destino; a origem é obtida da sessão. Pagamentos guarda a Transferência concluída com a chave, o valor, os IDs de ambas as movimentações e o saldo da origem no momento da operação. Contas atualiza os dois saldos e cria `PIX_SENT` e `PIX_RECEIVED` com o mesmo `referenceId` da Transferência. Uma transação local abrange tudo. Solicitações concorrentes travam as duas contas em ordem por ID e verificam a chave antes de movimentar o valor; a restrição única `(owner_id, idempotency_key)` permanece como proteção adicional.
 
 ### Ciclo mensal do cartão
 
@@ -113,6 +115,8 @@ A **context** defines what terms mean and who owns the data. An **aggregate** de
 Internal Pix conserves value between two accounts. Bills and invoices are **fictional outgoing settlements**, with no credit to another app user. There is no real Pix, bill, or card network.
 
 Each command that changes money or limit takes an **idempotency key**. Reusing the same key and data returns the recorded result; using that key with different data returns a conflict. A database uniqueness constraint and concurrency control prevent duplicates from simultaneous requests. Users operate only their own resources; the other party of an internal Pix sees their own entry.
+
+**Internal Pix implementation:** clients provide the destination account ID; the sender comes from the session. Payments stores the completed Transfer with its key, amount, both entry IDs, and sender balance at the time of transfer. Accounts updates both balances and appends `PIX_SENT` and `PIX_RECEIVED`, each with a `referenceId` linking to the Transfer. One local transaction covers all changes. Concurrent requests lock both accounts in ID order and check the key before moving funds; the unique `(owner_id, idempotency_key)` constraint adds database protection.
 
 ### Monthly card cycle
 
