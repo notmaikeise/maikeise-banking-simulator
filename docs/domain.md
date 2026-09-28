@@ -1,6 +1,6 @@
 # Modelo de domínio / Domain model
 
-> **Estado / Status:** decisões de produto confirmadas em 25/09/2026; implementação pendente. Este documento descreve o modelo planejado.
+> **Estado / Status:** decisões de produto confirmadas em 25/09/2026. Cadastro, Conta, Dinheiro, crédito de demonstração e Movimentação têm uma primeira implementação; Pagamentos e Cartões continuam planejados. / Product decisions confirmed on 25 September 2026. Registration, Account, Money, demo funding, and Entry have an initial implementation; Payments and Cards remain planned.
 
 ## Português
 
